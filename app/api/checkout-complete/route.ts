@@ -1,12 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
-import {
-	AIRTABLE_API_KEY,
-	AIRTABLE_APP_ID,
-	DONATION_IN_CENTS,
-	STRIPE_API_KEY,
-	STRIPE_WEBHOOK_SECRET,
-} from '@/config';
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 
@@ -19,13 +12,13 @@ async function insertToAirTable({
 	message: string;
 	amount: number;
 }) {
-	const url = `https://api.airtable.com/v0/${AIRTABLE_APP_ID}/donations`;
+	const url = `https://api.airtable.com/v0/${process.env.NEXT_PUBLIC_AIRTABLE_APP_ID}/donations`;
 
 	const response = await fetch(url, {
 		method: 'POST',
 		headers: {
 			'Content-type': 'application/json',
-			Authorization: `Bearer ${AIRTABLE_API_KEY}`,
+			Authorization: `Bearer ${process.env.NEXT_PUBLIC_AIRTABLE_API_KEY}`,
 		},
 		body: JSON.stringify({
 			records: [
@@ -43,7 +36,7 @@ async function insertToAirTable({
 	return response.json();
 }
 
-const stripe = new Stripe(STRIPE_API_KEY, {
+const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_API_KEY!, {
 	apiVersion: '2022-11-15',
 });
 
@@ -82,7 +75,7 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
 		event = stripe.webhooks.constructEvent(
 			buf,
 			signature,
-			STRIPE_WEBHOOK_SECRET
+			process.env.NEXT_PUBLIC_STRIPE_WEBHOOK_SECRET!
 		);
 	} catch (error: any) {
 		console.error('invalid signature', error.message);
