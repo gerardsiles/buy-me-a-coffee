@@ -40,12 +40,6 @@ const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_API_KEY!, {
 	apiVersion: '2022-11-15',
 });
 
-export const config = {
-	api: {
-		bodyParser: false,
-	},
-};
-
 export async function POST(req: NextRequest, res: NextApiResponse) {
 	if (req.method !== 'POST') {
 		return new NextResponse(JSON.stringify({ message: 'Method not allowed' }), {
